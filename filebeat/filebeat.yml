@@ -1,0 +1,24 @@
+filebeat.modules:
+  # apache 2 module used to read and parse backend access log
+  - module: apache2
+    access:
+      enabled: true
+      var.paths: ["/var/log/empamini/access.log*"]
+
+# generic log input used to read and parse backend application log
+filebeat.inputs:
+- type: log
+  # attach all the json keys in the log message directly to the 
+  # document in elasticsearch
+  json.keys_under_root: true
+  paths:
+    - /var/log/empamini/app.log*
+
+
+output.elasticsearch:
+  hosts: ["http://elk:9200"]
+
+# Setup kibana objects
+setup.kibana.host: "elk:5601"
+setup.kibana.protocol: "http"
+setup.dashboards.enabled: true

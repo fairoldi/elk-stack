@@ -1,0 +1,19 @@
+# listen on any address
+apm-server.host: '0.0.0.0:8200'
+
+output.elasticsearch:
+  hosts: ["http://elk:9200"]
+
+# deploy kibana objects
+setup.kibana.host: "elk:5601"
+setup.kibana.protocol: "http"
+setup.dashboards.enabled: true
+
+# enable js instrumentation and do some basic configuration
+apm-server.rum.enabled: true
+apm-server.rum.rate_limit: 10
+apm-server.rum.allow_origins: ['*']
+apm-server.rum.library_pattern: "node_modules|bower_components|~"
+apm-server.rum.exclude_from_grouping: "^/webpack"
+apm-server.rum.source_mapping.cache.expiration: 5m
+apm-server.rum.source_mapping.index_pattern: "apm-*-sourcemap*"

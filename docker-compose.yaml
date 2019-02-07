@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  
+  # All in one elk stack
+  elk:
+    build: elk
+    ports:
+      - "5601:5601" # kibana
+      - "9200:9200" # elastic
+      - "5044:5044" # logstash
+  
+  # Used to receieve apm data. Both backend and frontend are instrumented
+  # using elastic apm agents
+  apm-server:
+    build: apm-server
+    depends_on: 
+      - 'elk'
+    ports:
+      - '8200:8200'
+    # need to wait for kibana to be up&running, otherwise service fails
+    # when trying to configure kibana objects 
+    command: sh -c './wait-for-it.sh elk:5601 -t 0 -- apm-server -e'
+
+
+  # Performance metric monitoring
+  metricbeat:
+    # Running as root to be able to access /var/run/docker.sock  
+    user: root
+    depends_on: 
+      - 'elk'
+    build: metricbeat
+    # need to wait for kibana to be up&running, otherwise service fails
+    # when trying to configure kibana objects
+    command: sh -c './wait-for-it.sh elk:5601 -t 0 -- metricbeat -e --system.hostfs=/hostfs'
+    volumes:
+      # these bind-mounted volumes are used to monitor the docker host
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+
+
+
+
+
+
+
+
