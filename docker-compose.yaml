@@ -40,8 +40,19 @@ services:
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
 
 
+  heartbeat:
+      build: heartbeat
+      depends_on: 
+        - 'elk'
+      # need to wait for kibana to be up&running, otherwise service fails
+      # when trying to configure kibana objects 
+      command: sh -c './wait-for-it.sh elk:5601 -t 0 -- heartbeat -e'
 
 
+  logstash:
+      build: logstash
+      depends_on:
+        - 'elk'
 
 
 

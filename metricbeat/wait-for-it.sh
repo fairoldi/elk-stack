@@ -172,7 +172,8 @@ if [[ $WAITFORIT_CLI != "" ]]; then
         echoerr "$WAITFORIT_cmdname: strict mode, refusing to execute subprocess"
         exit $WAITFORIT_RESULT
     fi
-    sleep 10
+    echo "Sleeping 60 seconds"
+    sleep 60
     exec "${WAITFORIT_CLI[@]}"
 else
     exit $WAITFORIT_RESULT
