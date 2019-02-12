@@ -1,0 +1,32 @@
+heartbeat.monitors:
+- type: http
+  name: 'myembrace.empatica.com'
+  schedule: '@every 5m'
+  urls:
+    - https://myembrace.empatica.com/#!/login
+  check.response.status: 200
+
+- type: http
+  name: 'research.empatica.com'
+  schedule: '@every 5m'
+  urls:
+    - https://research.empatica.com/#!/login
+  check.response.status: 200
+
+- type: http
+  name: 'research.empatica.com'
+  schedule: '@every 5m'
+  urls:
+    - https://embrace-staging-api.empatica.com/v3/info
+  check.response.status: 200
+  check.response.body: '"status":"ok"'
+
+
+
+output.elasticsearch:
+  hosts: ["http://elk:9200"]
+
+# Deploy kibana objects
+setup.kibana.host: "elk:5601"
+setup.kibana.protocol: "http"
+setup.dashboards.enabled: true
